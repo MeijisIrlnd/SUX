@@ -43,6 +43,6 @@ namespace SUX
 			return { row, col };
 		}
 	private:
-		std::array<ComponentType, Rows* Cols> m_cells;
+		std::array<ComponentType, Rows * Cols> m_cells;
 	};
 }
