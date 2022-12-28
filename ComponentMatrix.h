@@ -22,8 +22,10 @@ namespace SUX
 		}
 	
 		ComponentType& operator[](size_t index) { return m_cells[index]; }
-		std::array<ComponentType, Rows* Cols>::iterator begin() { return m_cells.begin(); }
-		std::array<ComponentType, Rows* Cols>::iterator end() { return m_cells.end(); }
+        
+        typename std::array<ComponentType, Rows* Cols>::iterator begin() { return m_cells.begin(); }
+        
+        typename std::array<ComponentType, Rows* Cols>::iterator end() { return m_cells.end(); }
 
 		constexpr int size() { return Rows * Cols; }
 		constexpr int rows() { return Rows; }
