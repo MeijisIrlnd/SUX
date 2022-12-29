@@ -1,5 +1,6 @@
 #pragma once 
-#include <JuceHeader.h>
+
+#include <juce_gui_basics/juce_gui_basics.h>
 namespace SUX 
 { 
     class ImageButton : public juce::Component 
