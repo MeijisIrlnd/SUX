@@ -56,7 +56,7 @@ namespace SUX
             auto startX = getWidth() * m_reduction.first;
             auto startY = getHeight() * m_reduction.second;
             g.setColour(m_colour);
-            g.drawImageAt(m_image, startX, startY, true);
+            g.drawImageAt(m_renderImage, startX, startY, true);
         }
 
         void reduction(double xOffsetMultiplier, double yOffsetMultiplier) {
@@ -71,12 +71,12 @@ namespace SUX
             auto startY = getHeight() * m_reduction.second;
             int imgWidth = static_cast<int>(getWidth() - (startX * 2));
             int imgHeight = static_cast<int>(getHeight() - (startY * 2));
-            m_image = m_image.rescaled(imgWidth, imgHeight, juce::Graphics::ResamplingQuality::highResamplingQuality);
+            m_renderImage = m_image.rescaled(imgWidth, imgHeight, juce::Graphics::ResamplingQuality::highResamplingQuality);
         }
         
     private:    
         std::pair<double, double> m_reduction = { 0, 0 };
-        juce::Image m_image;
+        juce::Image m_image, m_renderImage;
         juce::Colour m_colour;
         Listener* m_listener{ nullptr };
     };

@@ -2,6 +2,42 @@
 
 namespace SUX 
 { 
+    inline static juce::Image recolourImageCopy(juce::Image& target, const juce::Colour& newWhite, bool fixSaturation = true)
+    {
+        juce::Image result = target.createCopy();
+        float destHue, destSat, destValue;
+        newWhite.getHSB(destHue, destSat, destValue);
+        juce::Colour temp;
+        auto* imageData = result.getPixelData();
+        for (auto y = 0; y < result.getHeight(); y++) {
+            for (auto x = 0; x < result.getWidth(); x++) {
+                // to hsv..
+                float srcHue, srcSaturation, srcValue;
+                auto srcColour = result.getPixelAt(x, y);
+                srcColour.getHSB(srcHue, srcSaturation, srcValue);
+                result.setPixelAt(x, y, juce::Colour::fromHSV(destHue, fixSaturation ? 1 : destSat, srcValue, srcColour.getFloatAlpha()));
+            }
+        }
+        return result;
+    }
+
+    inline static void recolourImageInPlace(juce::Image& target, const juce::Colour& newWhite, bool fixSaturation = true) {
+        float destHue, destSat, destValue;
+        newWhite.getHSB(destHue, destSat, destValue);
+        juce::Colour temp;
+        auto* imageData = target.getPixelData();
+        for (auto y = 0; y < target.getHeight(); y++) {
+            for (auto x = 0; x < target.getWidth(); x++) {
+                // to hsv..
+                float srcHue, srcSaturation, srcValue;
+                auto srcColour = target.getPixelAt(x, y);
+                srcColour.getHSB(srcHue, srcSaturation, srcValue);
+                target.setPixelAt(x, y, juce::Colour::fromHSV(destHue, fixSaturation ? 1 : destSat, srcValue, srcColour.getFloatAlpha()));
+            }
+        }
+    
+    }
+
     inline static juce::Colour colourBurn(juce::Colour& source, juce::Colour& modifier) 
     { 
         std::array<float, 3> sourceHSV, modifierHSV, result;

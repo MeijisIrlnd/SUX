@@ -7,12 +7,20 @@ namespace SUX
 	template <class T> 
 	concept DefaultConstructible = std::is_default_constructible<T>::value;
 
-	template<typename ComponentType, int Rows, int Cols> requires DerivedFromComponent<ComponentType> && DefaultConstructible<ComponentType>
+	template<typename ComponentType> requires DerivedFromComponent<ComponentType>&& DefaultConstructible<ComponentType>
 	class ComponentMatrix
 	{
 	public: 
+		ComponentMatrix(const int rows, const int cols) : m_rows(rows), m_cols(cols) {
+			m_cells.resize(static_cast<size_t>(rows * cols));
+		}
+
 		ComponentType& at(int row, int col) {
-			return m_cells[(Cols * row) + col];
+			return m_cells[(m_cols * row) + col];
+		}
+
+		ComponentType& at(int index) {
+			return m_cells[index];
 		}
 
 		void addAndMakeVisible(juce::Component* target) {
@@ -20,16 +28,15 @@ namespace SUX
 				target->addAndMakeVisible(dynamic_cast<juce::Component*>(&el));
 			}
 		}
-	
-		ComponentType& operator[](size_t index) { return m_cells[index]; }
-        
-        typename std::array<ComponentType, Rows* Cols>::iterator begin() { return m_cells.begin(); }
-        
-        typename std::array<ComponentType, Rows* Cols>::iterator end() { return m_cells.end(); }
 
-		constexpr int size() { return Rows * Cols; }
-		constexpr int rows() { return Rows; }
-		constexpr int cols() { return Cols; }
+		ComponentType& operator[](size_t index) { return m_cells[index]; }
+
+		typename std::vector<ComponentType>::iterator begin() { return m_cells.begin(); }
+		typename std::vector<ComponentType>::iterator end() { return m_cells.end(); }
+
+		const int size() { return m_rows * m_cols; }
+		const int rows() const { return m_rows; }
+		const int cols() const { return m_cols; }
 
 		std::tuple<int, int> getPositionForComponent(ComponentType* toFind)
 		{
@@ -40,11 +47,15 @@ namespace SUX
 		}
 
 		std::tuple<int, int> unflattenIndex(int flat) {
-			int row = flat / Rows;
-			int col = flat % Rows;
+			// This assumes a square mat..
+			int row = flat / m_cols;
+			int col = flat % m_cols;
 			return { row, col };
 		}
-	private:
-		std::array<ComponentType, Rows * Cols> m_cells;
+
+
+	private: 
+		std::vector<ComponentType> m_cells;
+		const int m_rows, m_cols;
 	};
 }
