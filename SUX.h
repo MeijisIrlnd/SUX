@@ -17,3 +17,5 @@ END_JUCE_MODULE_DECLARATION
 #include "Utils/BlendModes.h"
 #include "Utils/Palette.h"
 #include "ComponentMatrix.h"
+
+#include "Utils/LayoutQuickstart.h"
