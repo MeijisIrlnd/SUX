@@ -19,3 +19,4 @@ END_JUCE_MODULE_DECLARATION
 #include "ComponentMatrix.h"
 
 #include "Utils/LayoutQuickstart.h"
+#include "Utils/NestedComboBox.h"
