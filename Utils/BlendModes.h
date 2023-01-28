@@ -2,6 +2,13 @@
 
 namespace SUX 
 { 
+    /// @brief THIS IS SUPER FUCKING INEFFICIENT, PROBABLY BECAUSE OF BOUNDS CHECKING. 
+    /// Can also parallelise these fors probably...
+    /// @param target 
+    /// @param newWhite 
+    /// @param fixSaturation 
+    /// @return 
+    
     inline static juce::Image recolourImageCopy(juce::Image& target, const juce::Colour& newWhite, bool fixSaturation = true)
     {
         juce::Image result = target.createCopy();
