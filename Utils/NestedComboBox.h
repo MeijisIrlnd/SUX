@@ -28,22 +28,22 @@ namespace SUX
 
         void addSubMenu(const juce::String& name, const juce::StringArray& opts) 
         { 
-            std::unique_ptr<juce::ComboBox> current(new juce::ComboBox());
-            m_submenus.push_back(std::move(current));
-            m_submenus.back()->addItemList(opts, 1);
-            addToTree(name, m_submenus.back().get());
+            auto offset = m_comboBox.getNumItems() + 1;
+            juce::PopupMenu current;
+            for(auto opt = 0; opt < opts.size(); opt++) { 
+                current.addItem(opt + offset, opts[opt], true, false);
+            }
+            m_comboBox.getRootMenu()->addSubMenu(name, current);
         }
-
         juce::ComboBox* getComboBox() { return &m_comboBox; }
+
+
     private:
-        void addToTree(const juce::String& name, juce::ComboBox* toAdd) 
-        { 
-            auto root = m_comboBox.getRootMenu();
-            root->addSubMenu(name, *toAdd->getRootMenu());
-        }
         juce::ComboBox m_comboBox;
         std::vector<std::unique_ptr<juce::ComboBox>> m_submenus;
     };
+
+    
 
     class DirectoryComboBox : public NestedComboBox 
     { 
