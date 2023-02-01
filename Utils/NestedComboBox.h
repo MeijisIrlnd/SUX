@@ -38,7 +38,7 @@ namespace SUX
         juce::ComboBox* getComboBox() { return &m_comboBox; }
 
 
-    private:
+    protected:
         juce::ComboBox m_comboBox;
         std::vector<std::unique_ptr<juce::ComboBox>> m_submenus;
     };
@@ -66,16 +66,24 @@ namespace SUX
 
         void setDirectory(const juce::File& root) 
         { 
-            for(auto dir : juce::RangedDirectoryIterator(root, false, "*", juce::File::findDirectories)) 
-            { 
+            m_comboBox.clear();
+            std::map<juce::String, juce::File> sortedDirs;
+            for(auto dir : juce::RangedDirectoryIterator(root, false, "*", juce::File::findDirectories)) {
                 auto current = dir.getFile();
-                auto name = current.getFileNameWithoutExtension();
+                sortedDirs[current.getFileNameWithoutExtension()] = current;
+            }
+            
+            for(auto it = sortedDirs.begin(); it != sortedDirs.end(); ++it) {
+                auto name = it->first;
+                auto current= it->second;
                 juce::StringArray optionList;
-                for(auto item : juce::RangedDirectoryIterator(current, false, m_extension, juce::File::findFiles)) { 
+                for(auto item : juce::RangedDirectoryIterator(current, false, m_extension, juce::File::findFiles)) {
                     auto filename = item.getFile().getFileNameWithoutExtension();
                     m_memoryMap[filename] = item.getFile();
+                    m_itemList.push_back(filename);
                     optionList.add(item.getFile().getFileNameWithoutExtension());
                 }
+                optionList.sort(true);
                 addSubMenu(name, optionList);
             }
         }
@@ -87,10 +95,16 @@ namespace SUX
             return it->second;
         }
 
+        const size_t getIndexForItem(const juce::String& toLookup) { 
+            auto it = std::find(m_itemList.begin(), m_itemList.end(), toLookup);
+            if(it == m_itemList.end()) return -1;
+            return std::distance(m_itemList.begin(), it);
+        }
 
     private:
         juce::String m_extension;
         // item -> subfolder
         std::unordered_map<juce::String, juce::File> m_memoryMap;
+        std::vector<juce::String> m_itemList;
     };
 }
