@@ -30,6 +30,9 @@ namespace SUX
         }
 
         void mouseUp(const juce::MouseEvent& mouseEvent) override {
+            if(onClick != nullptr) {
+                onClick();
+            }
             if (m_listener == nullptr) return;
             m_listener->onSvgButtonClick(this);
         }
@@ -44,6 +47,8 @@ namespace SUX
         {
             //m_svg->setBounds(getBounds());
         }
+
+        std::function<void(void)> onClick{ nullptr };
 
     private: 
         Listener* m_listener{ nullptr };

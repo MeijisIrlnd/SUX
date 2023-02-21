@@ -70,6 +70,9 @@ namespace SUX
         void addListener(Listener* newListener) { m_listener = newListener; }
 
         void mouseUp(const juce::MouseEvent& mouseEvent) override {
+            if(onClick != nullptr) {
+                onClick();
+            }
             if (m_listener == nullptr) return;
             m_listener->onTextButtonClicked(this);
         }
@@ -80,6 +83,8 @@ namespace SUX
         void resized() override {
             m_label.setBounds(0, 0, getWidth(), getHeight());
         }
+
+        std::function<void(void)> onClick{ nullptr };
 
     private:
         juce::Colour m_textColour;
