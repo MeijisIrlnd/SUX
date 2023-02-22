@@ -60,6 +60,15 @@ namespace SUX
             return std::find(m_itemList.begin(), m_itemList.end(), toLookup) != m_itemList.end();
         }
 
+        [[maybe_unused]] bool existsInDirectory(const juce::String& directoryName, const juce::String& toLookup) {
+            // First off, does the directory exist??
+            auto it = m_options.find(directoryName);
+            if(it == m_options.end()) return false;
+            auto items = it->second;
+            auto el = std::find(items.begin(), items.end(), toLookup);
+            return el != items.end();
+        }
+
         [[maybe_unused]] void rescan() {
             scan(m_directory, m_extension);
         }
@@ -69,6 +78,10 @@ namespace SUX
         [[maybe_unused]] std::unordered_map<juce::String, juce::File>& getMemoryMap() noexcept { return m_memoryMap; }
 
         [[maybe_unused]] std::vector<juce::String>& getItemList() noexcept { return m_itemList; }
+
+        [[maybe_unused]] juce::File getDirectory() noexcept { return m_directory; }
+
+        [[maybe_unused]] juce::String getExtension() noexcept { return m_extension; }
 
     private:
         void scan(const juce::String& path, const juce::String& extension)
