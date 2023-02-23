@@ -86,6 +86,7 @@ namespace SUX
     private:
         void scan(const juce::String& path, const juce::String& extension)
         {
+            m_itemList.clear();
             m_options.clear();
             m_memoryMap.clear();
             std::map<juce::String, juce::File> sortedDirs;
@@ -98,7 +99,7 @@ namespace SUX
                 auto name = it->first;
                 auto current= it->second;
                 juce::StringArray optionList;
-                for(const auto& item : juce::RangedDirectoryIterator(current, false, extension, juce::File::findFiles)) {
+                for(const auto& item : juce::RangedDirectoryIterator(current, false, "*" + extension, juce::File::findFiles)) {
                     auto filename = item.getFile().getFileNameWithoutExtension();
                     m_memoryMap[filename] = item.getFile();
                     optionList.add(item.getFile().getFileNameWithoutExtension());
