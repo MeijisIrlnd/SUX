@@ -12,11 +12,11 @@ namespace SUX
 	{
 	public: 
 		ComponentMatrix(const int rows, const int cols) : m_rows(rows), m_cols(cols) {
-			m_cells.resize(static_cast<size_t>(rows * cols));
+			m_cells.resize(static_cast<size_t>(rows) * static_cast<size_t>(cols));
 		}
 
 		ComponentType& at(int row, int col) {
-			return m_cells[(m_cols * row) + col];
+			return m_cells[static_cast<size_t>((m_cols * row) + col)];
 		}
 
 		ComponentType& at(int index) {
@@ -34,15 +34,15 @@ namespace SUX
 		typename std::vector<ComponentType>::iterator begin() { return m_cells.begin(); }
 		typename std::vector<ComponentType>::iterator end() { return m_cells.end(); }
 
-		const int size() { return m_rows * m_cols; }
-		const int rows() const { return m_rows; }
-		const int cols() const { return m_cols; }
+		int size() { return m_rows * m_cols; }
+		[[nodiscard]] int rows() const { return m_rows; }
+		[[nodiscard]] int cols() const { return m_cols; }
 
 		std::tuple<int, int> getPositionForComponent(ComponentType* toFind)
 		{
 			auto it = std::find_if(m_cells.begin(), m_cells.end(), [toFind](const ComponentType& current) { return &current == toFind; });
 			if (it == m_cells.end()) return { -1, -1 };
-			int index = std::distance(m_cells.begin(), it);
+			int index = static_cast<int>(std::distance(m_cells.begin(), it));
 			return unflattenIndex(index);
 		}
 
