@@ -69,7 +69,7 @@ namespace SUX
 
         void addListener(Listener* newListener) { m_listener = newListener; }
 
-        void mouseUp(const juce::MouseEvent& mouseEvent) override {
+        void mouseUp(const juce::MouseEvent& /*mouseEvent*/) override {
             if(onClick != nullptr) {
                 onClick();
             }

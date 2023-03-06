@@ -34,7 +34,7 @@ namespace SUX
 				}
 				return Palette(loaded);
 			}
-			catch (std::exception& e) {
+			catch (std::exception& /*e*/) {
 				return Palette();
 			}
 		}
@@ -53,7 +53,7 @@ namespace SUX
 
 		inline juce::Colour getRandom() {
 			juce::Random rand;
-			return colours[static_cast<size_t>(rand.nextInt(juce::Range<int>(0, colours.size())))];
+			return colours[static_cast<size_t>(rand.nextInt(juce::Range<int>(0, static_cast<int>(colours.size()))))];
 		}
 
 		std::vector<juce::Colour>::iterator begin() { return colours.begin(); }

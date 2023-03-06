@@ -1,14 +1,16 @@
 #pragma once 
 
 #include <juce_gui_basics/juce_gui_basics.h>
-namespace SUX 
+
+#include <utility>
+namespace SUX
 { 
     class ImageButton : public juce::Component 
     { 
     public:
         struct Listener
         {
-            virtual ~Listener() { }
+            virtual ~Listener() = default;
             virtual void onImageButtonClick(ImageButton* source) = 0;
         };
 
@@ -19,8 +21,8 @@ namespace SUX
             m_image = juce::ImageCache::getFromMemory(data, size);
         }
 
-        ImageButton(const juce::Image& img, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) :
-            m_image(img), m_colour(colour), m_reduction(reduction) 
+        explicit ImageButton(juce::Image img, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) :
+            m_image(std::move(img)), m_colour(colour), m_reduction(reduction)
         { 
         }
 
@@ -28,15 +30,17 @@ namespace SUX
 
         ImageButton(ImageButton&& other) noexcept : m_image(other.m_image), m_colour(other.m_colour), m_reduction(other.m_reduction) { }
 
-        const ImageButton& operator=(const ImageButton& other)
+        ImageButton& operator=(const ImageButton& other)
         {
-            m_image = other.m_image;
-            m_colour = other.m_colour;
-            m_reduction = other.m_reduction;
+            if(&other != this) {
+                m_image = other.m_image;
+                m_colour = other.m_colour;
+                m_reduction = other.m_reduction;
+            }
             return *this;
         }
 
-        ~ImageButton() override { }
+        ~ImageButton() override = default;
 
         void addListener(Listener* newListener) {
             m_listener = newListener;
@@ -47,7 +51,7 @@ namespace SUX
             repaint();
         }
 
-        void mouseUp(const juce::MouseEvent& mouseEvent) {
+        void mouseUp(const juce::MouseEvent& /*mouseEvent*/) override {
             if (m_listener == nullptr) return;
             m_listener->onImageButtonClick(this);
         }
@@ -56,7 +60,7 @@ namespace SUX
             auto startX = getWidth() * m_reduction.first;
             auto startY = getHeight() * m_reduction.second;
             g.setColour(m_colour);
-            g.drawImageAt(m_renderImage, startX, startY, true);
+            g.drawImageAt(m_renderImage, static_cast<int>(startX), static_cast<int>(startY), true);
         }
 
         void reduction(double xOffsetMultiplier, double yOffsetMultiplier) {

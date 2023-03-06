@@ -7,11 +7,11 @@ namespace SUX
     public: 
         struct Listener
         {
-            virtual ~Listener() {}
+            virtual ~Listener() = default;
             virtual void onSvgButtonClick(SVGButton* source) = 0;
         };
 
-        SVGButton(const void* sourceData, int size, const juce::Colour& colour = juce::Colour(0xFF000000), float rotationRadians = 0) : m_rotationRadians(rotationRadians)
+        SVGButton(const void* sourceData, int size, const juce::Colour& /*colour*/ = juce::Colour(0xFF000000), float rotationRadians = 0) : m_rotationRadians(rotationRadians)
         {
             m_svg = juce::Drawable::createFromImageData(sourceData, size);
             m_svg->setInterceptsMouseClicks(false, false);
@@ -19,17 +19,13 @@ namespace SUX
             addAndMakeVisible(m_svg.get());
         }
 
-
-        ~SVGButton()
-        {
-
-        }
+        ~SVGButton() override = default;
 
         void addListener(Listener* newListener) {
             m_listener = newListener;
         }
 
-        void mouseUp(const juce::MouseEvent& mouseEvent) override {
+        void mouseUp(const juce::MouseEvent& /*mouseEvent*/) override {
             if(onClick != nullptr) {
                 onClick();
             }
@@ -40,7 +36,7 @@ namespace SUX
         void paint(juce::Graphics& g) override
         {
             m_svg->setTransformToFit(getLocalBounds().toFloat(), juce::RectanglePlacement::centred);
-            m_rotationRadians == 0 ? m_svg->draw(g, 1.0f) : m_svg->draw(g, 1.0f, juce::AffineTransform::rotation(m_rotationRadians, getWidth() / 2, getHeight() / 2));
+            m_rotationRadians == 0 ? m_svg->draw(g, 1.0f) : m_svg->draw(g, 1.0f, juce::AffineTransform::rotation(m_rotationRadians, static_cast<float>(getWidth()) / 2.0f, static_cast<float>(getHeight()) / 2.0f));
         }
 
         void resized() override

@@ -14,7 +14,7 @@ namespace SUX
 
         ~NestedComboBox() override = default;
 
-        void paint(juce::Graphics& g) override { }
+        void paint(juce::Graphics& /*g*/) override { }
 
         void resized() override {
             m_comboBox.setBounds(getLocalBounds());

@@ -14,8 +14,7 @@ namespace SUX
         juce::Image result = target.createCopy();
         float destHue, destSat, destValue;
         newWhite.getHSB(destHue, destSat, destValue);
-        juce::Colour temp;
-        auto* imageData = result.getPixelData();
+
         for (auto y = 0; y < result.getHeight(); y++) {
             for (auto x = 0; x < result.getWidth(); x++) {
                 // to hsv..
@@ -31,8 +30,6 @@ namespace SUX
     inline static void recolourImageInPlace(juce::Image& target, const juce::Colour& newWhite, bool fixSaturation = true) {
         float destHue, destSat, destValue;
         newWhite.getHSB(destHue, destSat, destValue);
-        juce::Colour temp;
-        auto* imageData = target.getPixelData();
         for (auto y = 0; y < target.getHeight(); y++) {
             for (auto x = 0; x < target.getWidth(); x++) {
                 // to hsv..
