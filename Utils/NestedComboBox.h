@@ -44,6 +44,10 @@ namespace SUX
             scan(m_directory, m_extension);
         }
 
+        explicit DirectoryData(std::vector<juce::String> paths, juce::String extension) : m_directories(std::move(paths)), m_extension(std::move(extension)) {
+            scan(m_directories, m_extension);
+        }
+
         [[maybe_unused]] std::optional<juce::File> lookupResult(const juce::String& toLookup) {
             auto it = m_memoryMap.find(toLookup);
             if (it == m_memoryMap.end()) return {};
@@ -70,7 +74,8 @@ namespace SUX
         }
 
         [[maybe_unused]] void rescan() {
-            scan(m_directory, m_extension);
+            if(m_directories.empty()){ scan(m_directory, m_extension); }
+            else { scan(m_directories, m_extension); }
         }
 
         [[maybe_unused]] std::map<juce::String, juce::StringArray>& getOptions() noexcept { return m_options; }
@@ -81,9 +86,12 @@ namespace SUX
 
         [[maybe_unused]] juce::File getDirectory() noexcept { return m_directory; }
 
+        [[maybe_unused]] juce::File getDirectory(size_t index) noexcept { return m_directories[index]; }
+
         [[maybe_unused]] juce::String getExtension() noexcept { return m_extension; }
 
     private:
+        // for handling a single path
         void scan(const juce::String& path, const juce::String& extension)
         {
             m_itemList.clear();
@@ -110,6 +118,34 @@ namespace SUX
             }
         }
 
+        // For handling multiple paths
+        void scan(std::vector<juce::String>& paths, const juce::String& extension) {
+            m_itemList.clear();
+            m_options.clear();
+            m_memoryMap.clear();
+            std::map<juce::String, juce::File> sortedDirs;
+            for(auto& p : paths) {
+                for(const auto& dir : juce::RangedDirectoryIterator(p, false, "*", juce::File::findDirectories)) {
+                    auto current = dir.getFile();
+                    sortedDirs[current.getFileNameWithoutExtension()] = current;
+                }
+                for(auto it = sortedDirs.begin(); it != sortedDirs.end(); ++it) {
+                    auto name = it->first;
+                    auto current = it->second;
+                    juce::StringArray optionList;
+                    for(const auto& item : juce::RangedDirectoryIterator(current, false, "*" + extension, juce::File::findFiles)) {
+                        auto filename = item.getFile().getFileNameWithoutExtension();
+                        m_memoryMap[filename] = item.getFile();
+                        optionList.add(item.getFile().getFileNameWithoutExtension());
+                        m_itemList.emplace_back(filename);
+                    }
+                    optionList.sort(true);
+                    m_options[name] = optionList;
+                }
+            }
+        }
+
+        std::vector<juce::String> m_directories;
         juce::String m_directory, m_extension;
         // unsorted, but has direct access to files
         std::unordered_map<juce::String, juce::File> m_memoryMap;
