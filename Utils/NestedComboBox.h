@@ -37,14 +37,15 @@ namespace SUX
         std::vector<std::unique_ptr<juce::ComboBox>> m_submenus;
     };
 
+    // TODO: move this to a different header
     /// Holds some useful data related to subdirs, and can be used to show nested dirs in a combobox..
     struct DirectoryData
     {
-        explicit DirectoryData(juce::String path, juce::String extension) : m_directory(std::move(path)), m_extension(std::move(extension)) {
+        explicit DirectoryData(juce::String path, juce::String extension) : m_directory(std::move(path)), m_extension(std::move(extension)), m_multiDirMode(false) {
             scan(m_directory, m_extension);
         }
 
-        explicit DirectoryData(std::vector<juce::String> paths, juce::String extension) : m_directories(std::move(paths)), m_extension(std::move(extension)) {
+        explicit DirectoryData(std::vector<juce::String> paths, juce::String extension) : m_directories(std::move(paths)), m_extension(std::move(extension)), m_multiDirMode(true) {
             scan(m_directories, m_extension);
         }
 
@@ -88,8 +89,11 @@ namespace SUX
 
         [[maybe_unused]] juce::File getDirectory(size_t index) noexcept { return m_directories[index]; }
 
+        [[nodiscard]] [[maybe_unused]] std::vector<juce::String> getDirectories() noexcept { return m_directories; }
+
         [[maybe_unused]] juce::String getExtension() noexcept { return m_extension; }
 
+        [[nodiscard]] [[maybe_unused]] bool getMultiDirMode() const noexcept { return m_multiDirMode; }
     private:
         // for handling a single path
         void scan(const juce::String& path, const juce::String& extension)
@@ -145,6 +149,7 @@ namespace SUX
             }
         }
 
+        bool m_multiDirMode{ false };
         std::vector<juce::String> m_directories;
         juce::String m_directory, m_extension;
         // unsorted, but has direct access to files
