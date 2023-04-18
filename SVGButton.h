@@ -53,4 +53,69 @@ namespace SUX
         
     };
 
+    class SVGToggleButton : public juce::Component
+    {
+    public:
+        struct Listener {
+            virtual ~Listener() = default;
+            virtual void onSVGToggleClicked(SVGToggleButton* /*source*/) = 0;
+        };
+
+        SVGToggleButton(const void* data, int size, const juce::Colour& offColour, const juce::Colour& onColour) :
+            m_offColour(offColour), m_onColour(onColour)
+        {
+            m_svg = juce::Drawable::createFromImageData(data, size);
+
+        }
+
+        ~SVGToggleButton() override = default;
+
+        void addListener(Listener* newListener) {
+            m_listener = newListener;
+        }
+
+        void mouseUp(const juce::MouseEvent& /*ev*/) override {
+            m_state = !m_state;
+            repaint();
+            if(onChange != nullptr) {
+                onChange(m_state);
+            }
+            if(m_listener == nullptr) return;
+            m_listener->onSVGToggleClicked(this);
+        }
+
+        void setState(bool newState, bool invokeCallback) {
+            m_state = newState;
+            if(invokeCallback) {
+                if(onChange != nullptr) {
+                    onChange(m_state);
+                }
+                if(m_listener != nullptr) {
+                    m_listener->onSVGToggleClicked(this);
+                }
+            }
+            repaint();
+        }
+
+        void paint(juce::Graphics& g) override {
+            m_svg->setTransformToFit(getLocalBounds().toFloat(), juce::RectanglePlacement::centred);
+            auto path = m_svg->getOutlineAsPath();
+            g.reduceClipRegion(path);
+            g.setColour(m_state ? m_offColour : m_onColour);
+            g.fillAll();
+        }
+
+        void resized() override {
+
+        }
+
+        std::function<void(bool)> onChange{ nullptr };
+    private:
+        bool m_state{ false };
+        juce::Colour m_offColour, m_onColour;
+        std::unique_ptr<juce::Drawable> m_svg{ nullptr };
+        Listener* m_listener{ nullptr };
+    };
+
+
 } 
