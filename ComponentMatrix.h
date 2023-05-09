@@ -2,12 +2,16 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 namespace SUX
 {
+#if __cplusplus >= 202002L
 	template <class T> 
 	concept DerivedFromComponent = std::is_base_of<juce::Component, T>::value;
 	template <class T> 
 	concept DefaultConstructible = std::is_default_constructible<T>::value;
 
 	template<typename ComponentType> requires DerivedFromComponent<ComponentType>&& DefaultConstructible<ComponentType>
+#else
+    template<typename ComponentType>
+#endif
 	class ComponentMatrix
 	{
 	public: 
