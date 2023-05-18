@@ -26,15 +26,34 @@ namespace SUX
             juce::PopupMenu current;
             for(auto opt = 0; opt < opts.size(); opt++) { 
                 current.addItem(opt + offset, opts[opt], true, false);
+                m_idLookup[opt + offset] = { name, opts[opt] };
             }
             m_comboBox.getRootMenu()->addSubMenu(name, current);
         }
         juce::ComboBox* getComboBox() { return &m_comboBox; }
 
+        [[nodiscard]] std::optional<std::tuple<juce::String, juce::String> > operator[](int id) {
+            if(m_idLookup.find(id) == m_idLookup.end()) {
+                return {};
+            }
+            return m_idLookup[id];
+        }
+
+        [[nodiscard]] std::optional<int> operator[](const std::tuple<juce::String, juce::String>& item) {
+            const auto& bankToFind = std::get<0>(item);
+            const auto& presetToFind = std::get<1>(item);
+            const auto it = std::find_if(m_idLookup.begin(), m_idLookup.end(), [&] (const std::pair<int, std::tuple<juce::String, juce::String> >& el) {
+                const auto& [currentBank, currentPreset] = el.second;
+                return currentBank == bankToFind && currentPreset == presetToFind;
+            });
+            if(it == m_idLookup.end()) return { };
+            return it->first;
+        }
 
     protected:
         juce::ComboBox m_comboBox;
         std::vector<std::unique_ptr<juce::ComboBox>> m_submenus;
+        std::unordered_map<int, std::tuple<juce::String, juce::String> > m_idLookup;
     };
 
     // TODO: move this to a different header
