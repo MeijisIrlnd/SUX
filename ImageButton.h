@@ -1,5 +1,6 @@
 #pragma once 
 
+#include "Utils/BlendModes.h"
 #include <juce_gui_basics/juce_gui_basics.h>
 
 #include <utility>
@@ -83,5 +84,64 @@ namespace SUX
         juce::Image m_image, m_renderImage;
         juce::Colour m_colour;
         Listener* m_listener{ nullptr };
+    };
+
+    class ImageToggleButton : public juce::Component
+    {
+    public:
+        struct Listener {
+            virtual ~Listener() = default;
+            virtual void onToggleButtonStateChanged(ImageToggleButton* source, bool newState) = 0;
+        };
+
+        ImageToggleButton(const void* data, int size, const juce::Colour& offColour, const juce::Colour& onColour) : m_offColour(offColour), m_onColour(onColour) {
+            m_image = juce::ImageCache::getFromMemory(data, size);
+        }
+
+        ~ImageToggleButton() override = default;
+
+        void addListener(Listener* newListener) {
+            m_listener = newListener;
+        }
+
+        void mouseUp(const juce::MouseEvent& /*mouseEvent*/) override {
+            triggerClick(true);
+        }
+
+        void triggerClick(bool triggerCallback = true) {
+            m_internalState = !m_internalState;
+            repaint();
+            if(triggerCallback) {
+                if(m_listener == nullptr) return;
+                m_listener->onToggleButtonStateChanged(this, m_internalState);
+            }
+        }
+
+        void setState(bool newState, bool triggerCallback = true) {
+            m_internalState = newState;
+            repaint();
+            if(triggerCallback) {
+                if(m_listener == nullptr) return;
+                m_listener->onToggleButtonStateChanged(this, m_internalState);
+            }
+        }
+
+        void paint(juce::Graphics& g) override {
+            auto& colour = m_internalState ? m_onColour : m_offColour;
+            g.setColour(colour);
+            auto rescaled = m_image.rescaled(getWidth(), getHeight(), juce::Graphics::highResamplingQuality);
+            g.drawImage(rescaled, getLocalBounds().toFloat(), juce::RectanglePlacement::stretchToFit, true);
+        }
+
+        void resized() override {
+
+        }
+
+    private:
+        juce::Colour m_offColour, m_onColour;
+        juce::Image m_image;
+        bool m_internalState{ false };
+        Listener* m_listener{ nullptr };
+
     };
 }
