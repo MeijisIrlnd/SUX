@@ -50,6 +50,16 @@ namespace SUX
 			return unflattenIndex(index);
 		}
 
+        [[maybe_unused]] [[nodiscard]] std::optional<ComponentType*> getNextVertical(ComponentType* source) {
+            auto it = std::find_if(m_cells.begin(), m_cells.end(), [source](const ComponentType& current) { return &current == source; });
+            if(it == m_cells.end()) return {};
+            auto index = static_cast<int>(std::distance(m_cells.begin(), it));
+            auto newIndex = index + m_cols;
+            // in range?
+            if(static_cast<size_t>(newIndex) >= m_cells.size()) return {};
+            return &m_cells[newIndex];
+        }
+
 		std::tuple<int, int> unflattenIndex(int flat) {
 			// This assumes a square mat..
 			int row = flat / m_cols;

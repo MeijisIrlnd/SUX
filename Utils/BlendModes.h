@@ -9,7 +9,7 @@ namespace SUX
     /// @param fixSaturation 
     /// @return 
     
-    inline static juce::Image recolourImageCopy(juce::Image& target, const juce::Colour& newWhite, bool fixSaturation = true)
+    [[maybe_unused]] inline static juce::Image recolourImageCopy(juce::Image& target, const juce::Colour& newWhite, bool fixSaturation = true)
     {
         juce::Image result = target.createCopy();
         float destHue, destSat, destValue;
@@ -27,7 +27,7 @@ namespace SUX
         return result;
     }
 
-    inline static void recolourImageInPlace(juce::Image& target, const juce::Colour& newWhite, bool fixSaturation = true) {
+    [[maybe_unused]] inline static void recolourImageInPlace(juce::Image& target, const juce::Colour& newWhite, bool fixSaturation = true) {
         float destHue, destSat, destValue;
         newWhite.getHSB(destHue, destSat, destValue);
         for (auto y = 0; y < target.getHeight(); y++) {
@@ -42,9 +42,9 @@ namespace SUX
     
     }
 
-    inline static juce::Colour colourBurn(juce::Colour& source, juce::Colour& modifier) 
+    [[maybe_unused]] inline static juce::Colour colourBurn(juce::Colour& source, juce::Colour& modifier)
     { 
-        std::array<float, 3> sourceHSV, modifierHSV, result;
+        std::array<float, 3> sourceHSV{}, modifierHSV{}, result{};
         source.getHSB(sourceHSV[0], sourceHSV[1], sourceHSV[2]);
         modifier.getHSB(modifierHSV[0], modifierHSV[1], modifierHSV[2]);
         result[0] = modifierHSV[0];

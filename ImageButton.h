@@ -57,11 +57,14 @@ namespace SUX
             m_listener->onImageButtonClick(this);
         }
 
-        void paint(juce::Graphics& g) override { 
+        void paint(juce::Graphics& g) override {
             auto startX = getWidth() * m_reduction.first;
             auto startY = getHeight() * m_reduction.second;
+            int imgWidth = static_cast<int>(getWidth() - (startX * 2));
+            int imgHeight = static_cast<int>(getHeight() - (startY * 2));
+            auto toDraw = m_image.rescaled(imgWidth, imgHeight, juce::Graphics::highResamplingQuality);
             g.setColour(m_colour);
-            g.drawImageAt(m_renderImage, static_cast<int>(startX), static_cast<int>(startY), true);
+            g.drawImageAt(toDraw, static_cast<int>(startX), static_cast<int>(startY), true);
         }
 
         void reduction(double xOffsetMultiplier, double yOffsetMultiplier) {
@@ -126,6 +129,7 @@ namespace SUX
             }
         }
 
+        [[nodiscard]] bool getInternalState() const { return m_internalState; }
         void paint(juce::Graphics& g) override {
             auto& colour = m_internalState ? m_onColour : m_offColour;
             g.setColour(colour);
