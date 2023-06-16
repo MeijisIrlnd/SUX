@@ -101,7 +101,7 @@ namespace SUX
             m_svg->setTransformToFit(getLocalBounds().toFloat(), juce::RectanglePlacement::centred);
             auto path = m_svg->getOutlineAsPath();
             g.reduceClipRegion(path);
-            g.setColour(m_state ? m_offColour : m_onColour);
+            g.setColour(m_state ? m_onColour : m_offColour);
             g.fillAll();
         }
 
