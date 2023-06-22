@@ -1,5 +1,9 @@
 #pragma once 
-
+#if defined(PERFETTO)
+    #if PERFETTO
+        #include <melatonin_perfetto/melatonin_perfetto.h>
+    #endif
+#endif
 namespace SUX 
 { 
     /// @brief THIS IS SUPER FUCKING INEFFICIENT, PROBABLY BECAUSE OF BOUNDS CHECKING. 
@@ -28,6 +32,11 @@ namespace SUX
     }
 
     [[maybe_unused]] inline static void recolourImageInPlace(juce::Image& target, const juce::Colour& newWhite, bool fixSaturation = true) {
+#if defined(PERFETTO)
+#if PERFETTO
+        TRACE_COMPONENT();
+#endif
+#endif
         float destHue, destSat, destValue;
         newWhite.getHSB(destHue, destSat, destValue);
         for (auto y = 0; y < target.getHeight(); y++) {
@@ -39,7 +48,6 @@ namespace SUX
                 target.setPixelAt(x, y, juce::Colour::fromHSV(destHue, fixSaturation ? 1 : destSat, srcValue, srcColour.getFloatAlpha()));
             }
         }
-    
     }
 
     [[maybe_unused]] inline static juce::Colour colourBurn(juce::Colour& source, juce::Colour& modifier)
@@ -51,5 +59,9 @@ namespace SUX
         result[1] = sourceHSV[1];
         result[2] = modifierHSV[2];
         return juce::Colour::fromHSV(result[0], result[1], result[2], 1.0f);
+    }
+
+    [[maybe_unused]] [[nodiscard]] inline static bool isGreyscale(const juce::Colour& x) noexcept {
+        return x.getRed() == x.getGreen() && x.getRed() == x.getBlue();
     }
 }
