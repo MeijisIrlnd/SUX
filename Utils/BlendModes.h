@@ -66,29 +66,20 @@ namespace SUX
         TRACE_COMPONENT();
 #endif
 #endif
-        if(isGreyscale(newWhite)) {
-            for(auto y = 0; y < target.getHeight(); ++y) {
-                for(auto x = 0; x < target.getWidth(); ++x) {
-                    if(target.getPixelAt(x,y).getFloatAlpha() == 0) continue;
-                    auto blended = PorterDuff::bAtopA(target.getPixelAt(x, y), newWhite);
-                    target.setPixelAt(x, y, blended);
-                }
+
+        float destHue, destSat, destValue;
+        newWhite.getHSB(destHue, destSat, destValue);
+        for (auto y = 0; y < target.getHeight(); y++) {
+            for (auto x = 0; x < target.getWidth(); x++) {
+                // to hsv..
+                float srcHue, srcSaturation, srcValue;
+                auto srcColour = target.getPixelAt(x, y);
+                srcColour.getHSB(srcHue, srcSaturation, srcValue);
+                target.setPixelAt(x, y, juce::Colour::fromHSV(destHue, fixSaturation ? 1 : destSat, srcValue,
+                                                              srcColour.getFloatAlpha()));
             }
         }
-        else {
-            float destHue, destSat, destValue;
-            newWhite.getHSB(destHue, destSat, destValue);
-            for (auto y = 0; y < target.getHeight(); y++) {
-                for (auto x = 0; x < target.getWidth(); x++) {
-                    // to hsv..
-                    float srcHue, srcSaturation, srcValue;
-                    auto srcColour = target.getPixelAt(x, y);
-                    srcColour.getHSB(srcHue, srcSaturation, srcValue);
-                    target.setPixelAt(x, y, juce::Colour::fromHSV(destHue, fixSaturation ? 1 : destSat, srcValue,
-                                                                  srcColour.getFloatAlpha()));
-                }
-            }
-        }
+
     }
 
     [[maybe_unused]] inline static juce::Colour colourBurn(juce::Colour& source, juce::Colour& modifier)
