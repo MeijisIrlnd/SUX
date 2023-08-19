@@ -52,6 +52,10 @@ namespace SUX
             return it->first;
         }
 
+        [[maybe_unused]] [[nodiscard]] const std::unordered_map<int, std::tuple<juce::String, juce::String> >& getIdLookup() const noexcept {
+            return m_idLookup;
+        }
+
     protected:
         VerboseComboBox m_comboBox;
         /*juce::ComboBox m_comboBox;*/
