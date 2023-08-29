@@ -32,7 +32,7 @@ namespace SUX::Quickstart
         [[maybe_unused]] void instantiateSlider(juce::Component* parent, QuickSlider& quickSlider, APVTS& tree, const juce::String& paramName)
         { 
             auto* param = tree.getParameter(paramName);
-            quickSlider.label.setText(param->getName(80), juce::dontSendNotification);
+            quickSlider.label.setText(TRANS(param->getName(80)), juce::dontSendNotification);
             parent->addAndMakeVisible(&quickSlider.label);
             quickSlider.slider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
             quickSlider.slider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 30, 20);
@@ -43,7 +43,7 @@ namespace SUX::Quickstart
 
         [[maybe_unused]] void instantiateComboBox(juce::Component* parent, QuickComboBox& quickCb, APVTS& tree, const juce::String& paramName, const juce::StringArray& itemList) {
             auto* param = tree.getParameter(paramName);
-            quickCb.label.setText(param->getName(80), juce::dontSendNotification);
+            quickCb.label.setText(TRANS(param->getName(80)), juce::dontSendNotification);
             parent->addAndMakeVisible(&quickCb.label);
             quickCb.comboBox.addItemList(itemList, 1);
             parent->addAndMakeVisible(&quickCb.comboBox);
