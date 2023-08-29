@@ -1,6 +1,6 @@
 #pragma once 
+#include "VerboseComboBox.h"
 #include <juce_gui_basics/juce_gui_basics.h>
-
 #include <utility>
 
 namespace SUX 
@@ -20,6 +20,7 @@ namespace SUX
             m_comboBox.setBounds(getLocalBounds());
         }
 
+
         void addSubMenu(const juce::String& name, const juce::StringArray& opts) 
         { 
             auto offset = m_comboBox.getNumItems() + 1;
@@ -31,6 +32,7 @@ namespace SUX
             m_comboBox.getRootMenu()->addSubMenu(name, current);
         }
         juce::ComboBox* getComboBox() { return &m_comboBox; }
+
 
         [[nodiscard]] std::optional<std::tuple<juce::String, juce::String> > operator[](int id) {
             if(m_idLookup.find(id) == m_idLookup.end()) {
@@ -50,8 +52,13 @@ namespace SUX
             return it->first;
         }
 
+        [[maybe_unused]] [[nodiscard]] const std::unordered_map<int, std::tuple<juce::String, juce::String> >& getIdLookup() const noexcept {
+            return m_idLookup;
+        }
+
     protected:
-        juce::ComboBox m_comboBox;
+        VerboseComboBox m_comboBox;
+        /*juce::ComboBox m_comboBox;*/
         std::vector<std::unique_ptr<juce::ComboBox>> m_submenus;
         std::unordered_map<int, std::tuple<juce::String, juce::String> > m_idLookup;
     };
