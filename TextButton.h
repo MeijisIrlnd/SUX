@@ -76,6 +76,11 @@ namespace SUX
             repaint();
         }
 
+        void showOutline(bool shouldShow) noexcept {
+            m_shouldDrawOutline = shouldShow;
+            repaint();
+        }
+
         [[nodiscard]] juce::Colour getOriginalColour() noexcept {
             return m_originalColour;
         }
@@ -88,6 +93,10 @@ namespace SUX
         }
         void paint(juce::Graphics& g) override {
             g.fillAll(m_colour);
+            if(m_shouldDrawOutline){
+                g.setColour(juce::Colour{0xFFFFFFFF});
+                g.drawRect(getLocalBounds(), 3);
+            }
         }
 
         void resized() override {
@@ -103,5 +112,6 @@ namespace SUX
         juce::Label m_label;
         juce::Colour m_originalColour;
         juce::Colour m_colour;
+        bool m_shouldDrawOutline{ false };
     };
 }
