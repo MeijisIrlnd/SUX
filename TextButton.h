@@ -11,6 +11,10 @@ namespace SUX
             virtual void onTextButtonClicked(TextButton* source) = 0;
         };
 
+
+        /*
+         * Text, Outline rect colour, text colour
+         */
         TextButton(const std::string& text, const juce::Colour& colour = juce::Colour(0x00000000), const juce::Colour& textColour = juce::Colour(0x00000000)) : m_originalColour(colour), m_colour(colour), m_text(text),
             m_textColour(textColour)
         {
