@@ -85,6 +85,10 @@ namespace SUX
             repaint();
         }
 
+        [[nodiscard]] bool getShowOutline() const noexcept {
+            return m_shouldDrawOutline;
+        }
+
         [[nodiscard]] juce::Colour getOriginalColour() noexcept {
             return m_originalColour;
         }
