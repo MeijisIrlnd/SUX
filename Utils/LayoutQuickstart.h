@@ -3,35 +3,35 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 
 #include <memory>
-namespace SUX::Quickstart
-{
-    enum class TYPE { SLIDER, COMBOBOX };
+namespace SUX::Quickstart {
+    enum class TYPE { SLIDER,
+                      COMBOBOX };
     struct QuickBase {
-        explicit QuickBase(TYPE t, juce::Component* c) : type(t), component(c) { }
+        explicit QuickBase(TYPE t, juce::Component* c) : type(t), component(c) {}
         juce::Label label;
         juce::Component* component;
         TYPE type;
     };
 
-    struct QuickSlider : public QuickBase
-    {
+    struct QuickSlider : public QuickBase {
         QuickSlider() : QuickBase(TYPE::SLIDER, &slider) {}
         juce::Slider slider;
-        std::unique_ptr<juce::SliderParameterAttachment> attachment{nullptr};
+        std::unique_ptr<juce::SliderParameterAttachment> attachment{ nullptr };
     };
 
     struct QuickComboBox : public QuickBase {
-        QuickComboBox() : QuickBase(TYPE::COMBOBOX, &comboBox) { }
+        QuickComboBox() : QuickBase(TYPE::COMBOBOX, &comboBox) {}
         juce::ComboBox comboBox;
-        std::unique_ptr<juce::ComboBoxParameterAttachment> attachment{nullptr};
+        std::unique_ptr<juce::ComboBoxParameterAttachment> attachment{ nullptr };
     };
-    struct LayoutQuickstart 
-    {
+    struct LayoutQuickstart {
         using APVTS = juce::AudioProcessorValueTreeState;
         std::vector<QuickBase*> uiElements;
-        [[maybe_unused]] void instantiateSlider(juce::Component* parent, QuickSlider& quickSlider, APVTS& tree, const juce::String& paramName)
-        { 
+        [[maybe_unused]] void instantiateSlider(juce::Component* parent, QuickSlider& quickSlider, APVTS& tree, const juce::String& paramName) {
             auto* param = tree.getParameter(paramName);
+            instantiateSlider(parent, quickSlider, param);
+        }
+        [[maybe_unused]] void instantiateSlider(juce::Component* parent, QuickSlider& quickSlider, juce::RangedAudioParameter* param) {
             quickSlider.label.setText(param->getName(80), juce::dontSendNotification);
             parent->addAndMakeVisible(&quickSlider.label);
             quickSlider.slider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
@@ -43,6 +43,10 @@ namespace SUX::Quickstart
 
         [[maybe_unused]] void instantiateComboBox(juce::Component* parent, QuickComboBox& quickCb, APVTS& tree, const juce::String& paramName, const juce::StringArray& itemList) {
             auto* param = tree.getParameter(paramName);
+            instantiateComboBox(parent, quickCb, param, itemList);
+        }
+
+        [[maybe_unused]] void instantiateComboBox(juce::Component* parent, QuickComboBox& quickCb, juce::RangedAudioParameter* param, const juce::StringArray& itemList) {
             quickCb.label.setText(param->getName(80), juce::dontSendNotification);
             parent->addAndMakeVisible(&quickCb.label);
             quickCb.comboBox.addItemList(itemList, 1);
@@ -51,4 +55,4 @@ namespace SUX::Quickstart
             uiElements.push_back(&quickCb);
         }
     };
-} 
+} // namespace SUX::Quickstart
