@@ -41,18 +41,18 @@ namespace SUX::Quickstart {
             uiElements.push_back(&quickSlider);
         }
 
-        [[maybe_unused]] void instantiateComboBox(juce::Component* parent, QuickComboBox& quickCb, APVTS& tree, const juce::String& paramName, const juce::StringArray& itemList) {
-            auto* param = tree.getParameter(paramName);
-            instantiateComboBox(parent, quickCb, param, itemList);
-        }
-
-        [[maybe_unused]] void instantiatComboBox(juce::Component* parent, QuickComboBox& quickCb, juce::RangedAudioParameter* param, const juce::StringArray& itemList) {
+        [[maybe_unused]] void instantiateComboBox(juce::Component* parent, QuickComboBox& quickCb, juce::RangedAudioParameter* param, const juce::StringArray& itemList) {
             quickCb.label.setText(param->getName(80), juce::dontSendNotification);
             parent->addAndMakeVisible(&quickCb.label);
             quickCb.comboBox.addItemList(itemList, 1);
             parent->addAndMakeVisible(&quickCb.comboBox);
             quickCb.attachment = std::make_unique<juce::ComboBoxParameterAttachment>(*param, quickCb.comboBox, nullptr);
             uiElements.push_back(&quickCb);
+        }
+
+        [[maybe_unused]] void instantiateComboBox(juce::Component* parent, QuickComboBox& quickCb, APVTS& tree, const juce::String& paramName, const juce::StringArray& itemList) {
+            auto* param = tree.getParameter(paramName);
+            instantiateComboBox(parent, quickCb, param, itemList);
         }
     };
 } // namespace SUX::Quickstart
