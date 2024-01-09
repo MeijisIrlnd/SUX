@@ -86,7 +86,7 @@ namespace SUX {
         ImageButtonWithTooltip(const void* data, int size, const juce::String& tooltipText, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : ImageButton(data, size, colour, reduction), m_tooltipText(tooltipText) {
         }
 
-        ImageButtonWithTooltip(juce::Image img, const juce::String& tooltipText, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : ImageButton(std::move(img), colour, reduction) {
+        ImageButtonWithTooltip(juce::Image img, const juce::String& tooltipText, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : ImageButton(std::move(img), colour, reduction), m_tooltipText(tooltipText) {
         }
 
         ImageButtonWithTooltip(const ImageButtonWithTooltip& other) : ImageButton(other), m_tooltipText(other.m_tooltipText) {}
