@@ -12,17 +12,17 @@ namespace SUX {
             virtual void onImageButtonClick(ImageButton* source) = 0;
         };
 
-        ImageButton(const void* data, int size, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : m_colour(colour),
-                                                                                                                                                                     m_reduction(reduction) {
+        ImageButton(const void* data, int size, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : m_reduction(std::move(reduction)),
+                                                                                                                                                                     m_colour(colour) {
             m_image = juce::ImageCache::getFromMemory(data, size);
         }
 
-        explicit ImageButton(juce::Image img, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : m_image(std::move(img)), m_colour(colour), m_reduction(reduction) {
+        explicit ImageButton(juce::Image img, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : m_reduction(std::move(reduction)), m_image(std::move(img)), m_colour(colour) {
         }
 
-        ImageButton(const ImageButton& other) : m_image(other.m_image), m_colour(other.m_colour), m_reduction(other.m_reduction) {}
+        ImageButton(const ImageButton& other) : m_reduction(other.m_reduction), m_image(other.m_image), m_colour(other.m_colour) {}
 
-        ImageButton(ImageButton&& other) noexcept : m_image(other.m_image), m_colour(other.m_colour), m_reduction(other.m_reduction) {}
+        ImageButton(ImageButton&& other) noexcept : m_reduction(std::move(other.m_reduction)), m_image(std::move(other.m_image)), m_colour(other.m_colour) {}
 
         ImageButton& operator=(const ImageButton& other) {
             if (&other != this) {
@@ -33,7 +33,7 @@ namespace SUX {
             return *this;
         }
 
-        virtual ~ImageButton() override = default;
+        ~ImageButton() override = default;
 
         void addListener(Listener* newListener) {
             m_listener = newListener;
@@ -83,18 +83,18 @@ namespace SUX {
 
     class ImageButtonWithTooltip : public ImageButton, public juce::TooltipClient {
     public:
-        ImageButtonWithTooltip(const void* data, int size, const juce::String& tooltipText, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : ImageButton(data, size, colour, reduction), m_tooltipText(tooltipText) {
+        ImageButtonWithTooltip(const void* data, int size, juce::String  tooltipText, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : ImageButton(data, size, colour, reduction), m_tooltipText(std::move(tooltipText)) {
         }
 
-        ImageButtonWithTooltip(juce::Image img, const juce::String& tooltipText, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : ImageButton(std::move(img), colour, reduction), m_tooltipText(tooltipText) {
+        ImageButtonWithTooltip(juce::Image img, juce::String  tooltipText, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : ImageButton(std::move(img), colour, reduction), m_tooltipText(std::move(tooltipText)) {
         }
 
         ImageButtonWithTooltip(const ImageButtonWithTooltip& other) : ImageButton(other), m_tooltipText(other.m_tooltipText) {}
 
-        ImageButtonWithTooltip(ImageButtonWithTooltip&& other) noexcept : ImageButton(other), m_tooltipText(std::move(other.m_tooltipText)) {}
+        ImageButtonWithTooltip(ImageButtonWithTooltip&& other) noexcept : ImageButton(std::move(other)), m_tooltipText(std::move(other.m_tooltipText)) {}
 
         ImageButtonWithTooltip& operator=(const ImageButtonWithTooltip& other) {
-            ImageButtonWithTooltip::operator=(other);
+            //ImageButtonWithTooltip::operator=(other);
             if (&other != this) {
                 m_tooltipText = other.m_tooltipText;
             }

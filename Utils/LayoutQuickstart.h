@@ -7,7 +7,7 @@ namespace SUX::Quickstart {
     enum class TYPE { SLIDER,
                       COMBOBOX };
     struct QuickBase {
-        explicit QuickBase(TYPE t, juce::Component* c) : type(t), component(c) {}
+        explicit QuickBase(TYPE t, juce::Component* c) : component(c), type(t) {}
         juce::Label label;
         juce::Component* component;
         TYPE type;

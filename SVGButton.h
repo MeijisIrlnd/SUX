@@ -13,7 +13,7 @@ namespace SUX
 
         SVGButton(const void* sourceData, int size, const juce::Colour& /*colour*/ = juce::Colour(0xFF000000), float rotationRadians = 0) : m_rotationRadians(rotationRadians)
         {
-            m_svg = juce::Drawable::createFromImageData(sourceData, size);
+            m_svg = juce::Drawable::createFromImageData(sourceData, static_cast<size_t>(size));
             m_svg->setInterceptsMouseClicks(false, false);
             //m_svg->replaceColour(juce::Colour(0xFFFFFFFF), colour);
             addAndMakeVisible(m_svg.get());
@@ -64,7 +64,7 @@ namespace SUX
         SVGToggleButton(const void* data, int size, const juce::Colour& offColour, const juce::Colour& onColour) :
             m_offColour(offColour), m_onColour(onColour)
         {
-            m_svg = juce::Drawable::createFromImageData(data, size);
+            m_svg = juce::Drawable::createFromImageData(data, static_cast<size_t>(size));
 
         }
 
