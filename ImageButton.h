@@ -1,39 +1,31 @@
-#pragma once 
+#pragma once
 
 #include "Utils/BlendModes.h"
 #include <juce_gui_basics/juce_gui_basics.h>
 
 #include <utility>
-namespace SUX
-{ 
-    class ImageButton : public juce::Component 
-    { 
+namespace SUX {
+    class ImageButton : public juce::Component {
     public:
-        struct Listener
-        {
+        struct Listener {
             virtual ~Listener() = default;
             virtual void onImageButtonClick(ImageButton* source) = 0;
         };
 
-        ImageButton(const void* data, int size, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) :
-            m_colour(colour),
-            m_reduction(reduction)
-        { 
+        ImageButton(const void* data, int size, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : m_reduction(std::move(reduction)),
+                                                                                                                                                                     m_colour(colour) {
             m_image = juce::ImageCache::getFromMemory(data, size);
         }
 
-        explicit ImageButton(juce::Image img, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) :
-            m_image(std::move(img)), m_colour(colour), m_reduction(reduction)
-        { 
+        explicit ImageButton(juce::Image img, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : m_reduction(std::move(reduction)), m_image(std::move(img)), m_colour(colour) {
         }
 
-        ImageButton(const ImageButton& other) : m_image(other.m_image), m_colour(other.m_colour), m_reduction(other.m_reduction) { }
+        ImageButton(const ImageButton& other) : m_reduction(other.m_reduction), m_image(other.m_image), m_colour(other.m_colour) {}
 
-        ImageButton(ImageButton&& other) noexcept : m_image(other.m_image), m_colour(other.m_colour), m_reduction(other.m_reduction) { }
+        ImageButton(ImageButton&& other) noexcept : m_reduction(std::move(other.m_reduction)), m_image(std::move(other.m_image)), m_colour(other.m_colour) {}
 
-        ImageButton& operator=(const ImageButton& other)
-        {
-            if(&other != this) {
+        ImageButton& operator=(const ImageButton& other) {
+            if (&other != this) {
                 m_image = other.m_image;
                 m_colour = other.m_colour;
                 m_reduction = other.m_reduction;
@@ -74,23 +66,50 @@ namespace SUX
         }
 
 
-        void resized() override { 
+        void resized() override {
             auto startX = getWidth() * m_reduction.first;
             auto startY = getHeight() * m_reduction.second;
             int imgWidth = static_cast<int>(getWidth() - (startX * 2));
             int imgHeight = static_cast<int>(getHeight() - (startY * 2));
             m_renderImage = m_image.rescaled(imgWidth, imgHeight, juce::Graphics::ResamplingQuality::highResamplingQuality);
         }
-        
-    private:    
+
+    private:
         std::pair<double, double> m_reduction = { 0, 0 };
         juce::Image m_image, m_renderImage;
         juce::Colour m_colour;
         Listener* m_listener{ nullptr };
     };
 
-    class ImageToggleButton : public juce::Component
-    {
+    class ImageButtonWithTooltip : public ImageButton, public juce::TooltipClient {
+    public:
+        ImageButtonWithTooltip(const void* data, int size, juce::String  tooltipText, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : ImageButton(data, size, colour, reduction), m_tooltipText(std::move(tooltipText)) {
+        }
+
+        ImageButtonWithTooltip(juce::Image img, juce::String  tooltipText, const juce::Colour& colour = juce::Colour(0xFFFFFFFF), std::pair<double, double> reduction = std::make_pair(0, 0)) : ImageButton(std::move(img), colour, reduction), m_tooltipText(std::move(tooltipText)) {
+        }
+
+        ImageButtonWithTooltip(const ImageButtonWithTooltip& other) : ImageButton(other), m_tooltipText(other.m_tooltipText) {}
+
+        ImageButtonWithTooltip(ImageButtonWithTooltip&& other) noexcept : ImageButton(std::move(other)), m_tooltipText(std::move(other.m_tooltipText)) {}
+
+        ImageButtonWithTooltip& operator=(const ImageButtonWithTooltip& other) {
+            //ImageButtonWithTooltip::operator=(other);
+            if (&other != this) {
+                m_tooltipText = other.m_tooltipText;
+            }
+            return *this;
+        }
+
+        [[nodiscard]] juce::String getTooltip() override {
+            return m_tooltipText;
+        }
+
+    private:
+        juce::String m_tooltipText;
+    };
+
+    class ImageToggleButton : public juce::Component {
     public:
         struct Listener {
             virtual ~Listener() = default;
@@ -114,8 +133,8 @@ namespace SUX
         void triggerClick(bool triggerCallback = true) {
             m_internalState = !m_internalState;
             repaint();
-            if(triggerCallback) {
-                if(m_listener == nullptr) return;
+            if (triggerCallback) {
+                if (m_listener == nullptr) return;
                 m_listener->onToggleButtonStateChanged(this, m_internalState);
             }
         }
@@ -123,8 +142,8 @@ namespace SUX
         void setState(bool newState, bool triggerCallback = true) {
             m_internalState = newState;
             repaint();
-            if(triggerCallback) {
-                if(m_listener == nullptr) return;
+            if (triggerCallback) {
+                if (m_listener == nullptr) return;
                 m_listener->onToggleButtonStateChanged(this, m_internalState);
             }
         }
@@ -138,7 +157,6 @@ namespace SUX
         }
 
         void resized() override {
-
         }
 
     private:
@@ -146,6 +164,5 @@ namespace SUX
         juce::Image m_image;
         bool m_internalState{ false };
         Listener* m_listener{ nullptr };
-
     };
-}
+} // namespace SUX

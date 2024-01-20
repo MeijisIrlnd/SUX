@@ -4,22 +4,23 @@ namespace SUX
 {
 	struct Palette
 	{
-		Palette() { }
+		Palette() = default;
 		
-		Palette(const std::vector<juce::Colour>& colours_) : colours(colours_) { }
+		explicit Palette(const std::vector<juce::Colour>& colours_) : colours(colours_) { }
 		
-		Palette(const Palette& other) : colours(other.colours) { }
-		
-		Palette(Palette&& other) noexcept : colours(other.colours) { }
-		
-		~Palette() { }
 
 		Palette& operator=(const Palette& other) {
-			colours = other.colours;
+            if(&other != this) {
+                colours = other.colours;
+            }
+            return *this;
 		}
 
 		Palette& operator=(Palette&& other) noexcept {
-			colours = other.colours;
+            if(&other != this) {
+                colours = other.colours;
+            }
+            return *this;
 		}
 
 		static inline Palette fromString(const juce::String& data)
@@ -35,7 +36,7 @@ namespace SUX
 				return Palette(loaded);
 			}
 			catch (std::exception& /*e*/) {
-				return Palette();
+				return {};
 			}
 		}
 
