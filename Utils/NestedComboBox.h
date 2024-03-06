@@ -138,9 +138,9 @@ namespace SUX
                 sortedDirs[current.getFileNameWithoutExtension()] = current;
             }
 
-            for(auto it = sortedDirs.begin(); it != sortedDirs.end(); ++it) {
-                auto name = it->first;
-                auto current= it->second;
+            for(auto & sortedDir : sortedDirs) {
+                auto name = sortedDir.first;
+                auto current= sortedDir.second;
                 juce::StringArray optionList;
                 for(const auto& item : juce::RangedDirectoryIterator(current, false, extensionString, juce::File::findFiles)) {
                     auto filename = item.getFile().getFileNameWithoutExtension();
@@ -167,9 +167,9 @@ namespace SUX
                         auto current = dir.getFile();
                         sortedDirs[current.getFileNameWithoutExtension()] = current;
                     }
-                    for (auto it = sortedDirs.begin(); it != sortedDirs.end(); ++it) {
-                        auto name = it->first;
-                        auto current = it->second;
+                    for (auto & sortedDir : sortedDirs) {
+                        auto name = sortedDir.first;
+                        auto current = sortedDir.second;
                         juce::StringArray optionList;
                         for (const auto &item: juce::RangedDirectoryIterator(current, false, extensionString,
                                                                              juce::File::findFiles)) {
@@ -199,7 +199,7 @@ namespace SUX
         }
 
 
-        [[nodiscard]] juce::String formatExtensionString(const std::vector<juce::String>& extensions) {
+        [[nodiscard]] static juce::String formatExtensionString(const std::vector<juce::String>& extensions) {
             juce::String extensionString;
             for(size_t i = 0; i < extensions.size(); ++i) {
                 extensionString += "*" + extensions[i];
@@ -241,10 +241,10 @@ namespace SUX
         {
             m_comboBox.clear(juce::dontSendNotification);
             auto& options = m_directoryData.getOptions();
-            for(auto it = options.begin(); it != options.end(); ++it)
+            for(auto & option : options)
             {
-                auto name = it->first;
-                auto current = it->second;
+                auto name = option.first;
+                auto current = option.second;
                 addSubMenu(name, current);
             }
         }
