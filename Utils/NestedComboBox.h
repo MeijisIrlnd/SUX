@@ -71,11 +71,11 @@ namespace SUX
             juce::String path;
             bool childDirs;
         };
-        explicit DirectoryData(juce::String path, std::vector<juce::String> extension) : m_directory(std::move(path)), m_extension(std::move(extension)), m_multiDirMode(false) {
+        explicit DirectoryData(juce::String path, std::vector<juce::String> extension) : m_multiDirMode(false), m_directory(std::move(path)), m_extension(std::move(extension)) {
             scan(m_directory, m_extension);
         }
 
-        explicit DirectoryData(std::vector<TargetDirectory> paths, std::vector<juce::String> extension) : m_directories(std::move(paths)), m_extension(std::move(extension)), m_multiDirMode(true) {
+        explicit DirectoryData(std::vector<TargetDirectory> paths, std::vector<juce::String> extension) : m_multiDirMode(true), m_directories(std::move(paths)), m_extension(std::move(extension)) {
             scan(m_directories, m_extension);
         }
 
